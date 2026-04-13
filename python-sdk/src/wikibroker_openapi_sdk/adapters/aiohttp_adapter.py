@@ -1,9 +1,11 @@
-from typing import Callable
-from aiohttp import ClientRequest, ClientHandlerType, ClientResponse
-from asyncer import syncify, asyncify
-from ..common.types import Request, Headers
-from uuid import UUID
 from datetime import datetime
+from typing import Callable
+from uuid import UUID
+
+from aiohttp import ClientRequest, ClientHandlerType, ClientResponse, Payload
+from asyncer import syncify, asyncify
+
+from wikibroker_openapi_sdk.common.types import Request, Headers
 
 
 class AiohttpRequest:
@@ -24,11 +26,9 @@ class AiohttpRequest:
 
     @property
     def data(self) -> bytes:
-        return syncify(self._raw.body.as_bytes)()
-
-
-def load(raw: ClientRequest) -> Request:
-    return AiohttpRequest(raw)
+        if hasattr(self._raw.body, "as_bytes") and isinstance(self._raw.body, Payload):
+            return syncify(self._raw.body.as_bytes)()
+        return b""
 
 
 def build_auth(
@@ -42,7 +42,7 @@ def build_auth(
     async def auth_middleware(
         req: ClientRequest, handler: ClientHandlerType
     ) -> ClientResponse:
-        r = load(req)
+        r = AiohttpRequest(req)
         load_headers(r.headers, api_key, timestamp_generator(), id_generator())
         await asyncify(sign)(r, api_secret)
         return await handler(req)

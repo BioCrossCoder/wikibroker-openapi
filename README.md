@@ -27,17 +27,17 @@ WikiBroker的OpenAPI接口都会校验请求
 <details>
 <summary>npm</summary>
 
-    npm install ./wikibroker-openapi-js-sdk-1.0.0.tgz
+    npm install ./wikibroker-openapi-js-sdk-1.0.1.tgz
 </details>
 <details>
 <summary>yarn</summary>
 
-    yarn add ./wikibroker-openapi-js-sdk-1.0.0.tgz
+    yarn add ./wikibroker-openapi-js-sdk-1.0.1.tgz
 </details>
 <details>
 <summary>pnpm</summary>
 
-    pnpm add ./wikibroker-openapi-js-sdk-1.0.0.tgz
+    pnpm add ./wikibroker-openapi-js-sdk-1.0.1.tgz
 </details>
 <br/>
 
@@ -89,7 +89,7 @@ axios.post(
 **安装**
 
 ```bash
-tar zxf wikibroker-openapi-go-sdk-1.0.0.tgz
+tar zxf wikibroker-openapi-go-sdk-1.0.1.tgz
 go mod edit -replace=wikibroker_openapi_sdk=./wikibroker_openapi_sdk
 go get wikibroker_openapi_sdk
 ```
@@ -117,12 +117,27 @@ client.Post(
 `resty`
 
 ```golang
-import sdk "wikibroker_openapi_sdk"
+import (
+    "bytes"
+    "encoding/json"
+    "io"
+    sdk "wikibroker_openapi_sdk"
+)
 
 const apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
 const apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
 client := resty.New()
-m := sdk.NewRestyRequestMiddleware(apiKey, apiSecret)
+m := sdk.NewRestyRequestMiddleware(
+    apiKey,
+    apiSecret,
+    func(body any) (io.ReadCloser, error) {
+        data, err := json.Marshal(body)
+        if err != nil {
+            return nil, err
+        }
+        return io.NopCloser(bytes.NewBuffer(data)), nil
+    },
+)
 client.AddRequestMiddleware(m)
 
 client.R().SetBody(
@@ -186,17 +201,17 @@ agent.Post("https://api.example.com/test?q1=c&q2=b&q1=a").Send(body).End()
 <details>
 <summary>pip</summary>
 
-    pip install ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
+    pip install ./wikibroker_openapi_sdk-1.0.1-py3-none-any.whl
 </details>
 <details>
 <summary>poetry</summary>
 
-    poetry add ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
+    poetry add ./wikibroker_openapi_sdk-1.0.1-py3-none-any.whl
 </details>
 <details>
 <summary>uv</summary>
 
-    uv add ./wikibroker_openapi_sdk-1.0.0a0-py3-none-any.whl
+    uv add ./wikibroker_openapi_sdk-1.0.1-py3-none-any.whl
 </details>
 <br/>
 
@@ -260,6 +275,352 @@ async def send_request():
 send_request()
 ```
 
+#### `Java`接入
+
+**安装**
+
+`maven`
+
+1. 第一步：安装jar包
+
+    ```bash
+    mvn install:install-file \
+    -Dfile=./wikibroker-openapi-sdk-0.1.0-alpha.jar \
+    -DgroupId=com.wikiglobal \
+    -DartifactId=wikibroker-openapi-sdk \
+    -Dversion=0.1.0-alpha \
+    -Dpackaging=jar
+    ```
+
+2. 第二步：声明maven依赖
+
+    ```xml
+    <dependency>
+        <groupId>com.wikiglobal</groupId>
+        <artifactId>wikibroker-openapi-sdk</artifactId>
+        <version>0.1.0-alpha</version>
+        <scope>compile</scope>
+    ```
+
+`gradle`
+
+1. 方式一：使用Groovy声明依赖
+
+    `build.gradle`
+
+    ```groovy
+    dependencies {
+        implementation files('./wikibroker-openapi-sdk-0.1.0-alpha.jar')
+    }
+    ```
+
+2. 方式二：使用Kotlin声明依赖
+
+    `build.gradle.kts`
+
+    ```kotlin
+    dependencies {
+        implementation(files('./wikibroker-openapi-sdk-0.1.0-alpha.jar'))
+    }
+    ```
+
+**示例**
+
+`java.net.http`
+
+```java
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApi.RequestBuilderFactory;
+// ...
+final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+final var factory = new RequestBuilderFactory<HttpRequest>(
+    API_KEY,
+    API_SECRET,
+    RequestBuilderFactory.Type.Native
+);
+
+try (var client = HttpClient.newHttpClient()) {
+    var builder = factory.create();
+    var req = builder.method("POST")
+                     .url("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .body("{\"key\":\"value\"")
+                     .build();
+    client.send(req, HttpResponse.BodyHandlers.ofString());
+} catch (Exception e) {
+    // Handle Exception
+}
+```
+
+`okhttp`
+
+```java
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApi.RequestBuilderFactory;
+// ...
+final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+final var factory = new RequestBuilderFactory<Request>(
+    API_KEY,
+    API_SECRET,
+    RequestBuilderFactory.Type.OkHttp
+);
+
+var client = new OkHttpClient();
+try {
+    var builder = factory.create();
+    var req = builder.method("POST")
+                     .url("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .body("{\"key\":\"value\"")
+                     .build();
+    try (var resp = client.newCall(req).execute()) {
+        // Handle Response
+    }
+} catch (Exception e) {
+    // Handle Exception
+}
+```
+
+`apache httpclient`
+
+```java
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import com.wikiglobal.wikibroker.openapi.WikiBrokerOpenApi.RequestBuilderFactory;
+// ...
+final String API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+final String API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+final var factory = new RequestBuilderFactory<ClassicHttpRequest>(
+    API_KEY,
+    API_SECRET,
+    RequestBuilderFactory.Type.Apache
+);
+
+try (var client = HttpClients.createDefault()) {
+    var builder = factory.create();
+    var req = builder.method("POST")
+                     .url("https://api.example.com/test?q1=c&q2=b&q1=a")
+                     .body("{\"key\":\"value\"")
+                     .build();
+    client.execute(
+        req, resp -> {
+            // Handle Response
+            return null;
+        }
+    );
+} catch (Exception e) {
+    // Handle Exception
+}
+```
+
+#### `PHP`接入
+
+**安装**
+
+```bash
+mv wikibroker-openapi-php-sdk-0.1.0-alpha.zip ./
+composer config repositories.local artifact ./
+composer require wikiglobal/wikibroker-openapi-sdk:0.1.0-alpha
+```
+
+**示例**
+
+`guzzle`
+
+```php
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+use WikibrokerOpenapiSdk\Api;
+
+const API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+const API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+$stack = new HandlerStack();
+$stack->setHandler(new CurlHandler());
+$middleware = Api::createGuzzleSignMiddleware(API_KEY, API_SECRET);
+$stack->push($middleware);
+$client = new Client(['handler' => $stack]);
+
+$client->post(
+    "https://api.example.com/test?q1=c&q2=b&q1=a",
+    [
+        'query' => [
+            "q1" => ["c", "a"],
+            "q2" => ["b"]
+        ],
+        'json' => [
+            "key" => "value"
+        ]
+    ]
+);
+```
+
+`symfony/http-client`
+
+```php
+use Symfony\Component\HttpClient\Psr18Client;
+use WikibrokerOpenapiSdk\Api;
+
+const API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+const API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+$rawClient = new Psr18Client();
+$client = Api::createPsrHttpClientWithSign(API_KEY, API_SECRET)->setClient($rawClient);
+
+$body = $rawClient->createStream(json_encode(["key" => "value"]));
+$request = $rawClient->createRequest(
+    "POST",
+    "https://api.example.com/test?q1=c&q2=b&q1=a"
+)->withBody($body);
+$client->sendRequest($request);
+```
+
+#### `C#` 接入
+
+**安装**
+
+```bash
+# 把WikiBroker.OpenApi.Sdk.0.1.0-alpha.nupkg放在项目根目录下并执行以下命令
+dotnet add package WikiBroker.OpenApi.Sdk --source ./ --version 0.1.0-alpha
+```
+
+**示例**
+
+`System.Net.Http`
+
+```cs
+using System.Net.Http;
+using System.Net.Http.Json;
+using WikiBroker.OpenApi.Sdk;
+
+var ApiKey = Guid.Parse("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b");
+var ApiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+var withSign = WikiBrokerOpenApi.CreateDelegatingHandlerConstructor(ApiKey, ApiSecret);
+var client = new HttpClient(withSign(new HttpClientHandler()));
+
+client.PostAsync(
+    "https://api.example.com/test?q1=c&q2=b&q1=a",
+    JsonContent.Create(new { key = "value" })
+);
+```
+
+#### `Dart` 接入
+
+**安装**
+
+1. 第一步：解压tgz包
+
+    ```bash
+    tar zxf wikibroker-openapi-dart-sdk-0.1.0-alpha.tgz
+    ```
+
+2. 第二步：声明pubspec依赖
+
+    ```yaml
+    dependencies:
+      # ...其它依赖项
+      wikibroker_openapi_sdk:
+        path: ./wikibroker_openapi_sdk
+    ```
+
+**示例**
+
+`http`
+
+```dart
+import 'package:http/http.dart' as http;
+import 'package:wikibroker_openapi_sdk/wikibroker_openapi_sdk.dart';
+
+const apiKey = 'ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b';
+const apiSecret = '4ae4bf20-0afa-4122-ade8-c0beca7bd5e4';
+final client = createHttpClient(http.Client(), apiKey, apiSecret);
+
+client.post(
+  Uri.parse("https://api.example.com/test?q1=c&q2=b&q1=a"),
+  body: {"key": "value"},
+);
+```
+
+`dio`
+
+```dart
+import 'package:dio/dio.dart';
+import 'package:wikibroker_openapi_sdk/wikibroker_openapi_sdk.dart';
+
+const apiKey = 'ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b';
+const apiSecret = '4ae4bf20-0afa-4122-ade8-c0beca7bd5e4';
+final client = Dio();
+final interceptor = createDioRequestInterceptor(
+  apiKey,
+  apiSecret,
+  jsonEncode,
+);
+client.interceptors.add(interceptor);
+
+client.post(
+  "https://api.example.com/test?q1=c&q2=b&q1=a",
+  data: {"key": "value"},
+);
+```
+
+#### `Swift` 接入
+
+**安装**
+
+1. 第一步：解压zip包
+
+    ```bash
+    unzip wikibroker-openapi-swift-sdk-0.1.0-alpha.zip
+    ```
+
+2. 第二步：在XCode中将解压后目录作为项目依赖包添加
+
+**示例**
+
+`URLSession`
+
+```swift
+import Foundation
+import WikibrokerOpenapiSdk
+
+let apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+let apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+let s = URLSession.shared
+s.setAuth(apiKey: apiKey, apiSecret: apiSecret)
+
+var req = URLRequest(URL("https://api.example.com/test?q1=c&q2=b&q1=a"))
+req.httpMethod = "POST"
+req.httpBody = try JSONSerialization.data(withJSONObject: [
+    "key": "value"
+])
+s.dataWithAuth(for: &req)
+```
+
+`Alamofire`
+
+```swift
+import Alamofire
+import Foundation
+import WikibrokerOpenapiSdk
+
+let apiKey = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+let apiSecret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+let interceptor = makeAlamofireAuthInterceptor(
+    apiKey: apiKey,
+    apiSecret: apiSecret
+)
+let s = Session(interceptor: interceptor)
+
+let resp = s.request(
+    "https://api.example.com/test?q1=c&q2=b&q1=a",
+    method: HTTPMethod(rawValue: "POST"),
+    parameters: ["key": "value"],
+    encoding: JSONEncoding.default
+).response
+```
+
 ### 通过API接入
 
 如果你使用的编程语言没有可用的SDK，可以按照以下方式自行编写接入代码。
@@ -274,3 +635,16 @@ send_request()
    1. 将请求查询参数按`key`的字典序升序排列，对于相同`key`则再按`value`的字典序升序排列，然后按`{key}={value}`的格式用`&`拼接，构成规范化查询字符串`canonical_query`。
    2. 计算请求体的`sha256`哈希并转换为16进制编码字符串`body_hash`。
    3. 用换行符拼接大写请求方法、请求相对路径、`canonical_query`、`X-Api-Key`、`X-Timestamp`、`X-Nonce`、`body_hash`，然后生成`hmac-sha256`哈希并转换为16进制编码字符串，得到请求签名`X-Signature`。
+
+## 兼容性说明
+
+| SDK包 | 开发语言版本 |
+| --- | --- |
+| JavaScript SDK | Node 22 |
+| Python SDK | Python 3.12 |
+| Golang SDK | Go 1.23 |
+| Java SDK | Java 21 |
+| PHP SDK | PHP 8.3 |
+| .NET SDK | C# 12 |
+| Dart SDK | Dart 3.11 |
+| Swift SDK | Swift 6.3 |

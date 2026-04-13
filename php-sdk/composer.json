@@ -1,0 +1,34 @@
+{
+    "name": "wikiglobal/wikibroker-openapi-sdk",
+    "version": "0.1.0-alpha",
+    "description": "WikiBroker OpenAPI SDK",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "WikibrokerOpenapiSdk\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Auston",
+            "email": "auston@wikiglobal.com"
+        }
+    ],
+    "scripts": {
+        "test": "phpunit tests",
+        "build": "@composer archive --format=zip"
+    },
+    "require": {
+        "php": "^8.3",
+        "psr/http-message": "^2.0",
+        "ramsey/uuid": "^4.9",
+        "psr/http-client": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12",
+        "guzzlehttp/guzzle": "^7.0",
+        "symfony/http-client": "^7.4",
+        "nyholm/psr7": "^1.8"
+    }
+}

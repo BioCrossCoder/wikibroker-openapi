@@ -1,2 +1,5 @@
 *.tgz
 *.whl
+*.jar
+*.zip
+*.nupkg

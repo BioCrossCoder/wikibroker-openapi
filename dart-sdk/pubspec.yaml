@@ -1,0 +1,17 @@
+name: wikibroker_openapi_sdk
+description: A starting point for Dart libraries or applications.
+version: 0.1.0-alpha
+repository: https://github.com/WikiGlobal-Lab/wikibroker-openapi/tree/dev/dart-sdk
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  uuid: ^4.5.3
+  crypto: ^3.0.7
+  http: ^1.6.0
+  dio: ^5.9.2
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.6
