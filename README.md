@@ -621,6 +621,48 @@ let resp = s.request(
 ).response
 ```
 
+#### `Ruby` 接入
+
+**安装**
+
+```bash
+// TODO
+```
+
+**示例**
+
+```rb
+# TODO
+```
+
+#### `Kotlin` 接入
+
+**安装**
+
+```bash
+// TODO
+```
+
+**示例**
+
+```kt
+// TODO
+```
+
+#### `Rust` 接入
+
+**安装**
+
+```bash
+// TODO
+```
+
+**示例**
+
+```rs
+// TODO
+```
+
 ### 通过API接入
 
 如果你使用的编程语言没有可用的SDK，可以按照以下方式自行编写接入代码。
@@ -648,3 +690,6 @@ let resp = s.request(
 | .NET SDK | C# 12 |
 | Dart SDK | Dart 3.11 |
 | Swift SDK | Swift 6.3 |
+| Ruby SDK | 待定 |
+| Rust SDK | 待定 |
+| Kotlin SDK | 待定 |
