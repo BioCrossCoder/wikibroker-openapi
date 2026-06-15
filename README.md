@@ -691,5 +691,5 @@ let resp = s.request(
 | Dart SDK | Dart 3.11 |
 | Swift SDK | Swift 6.3 |
 | Ruby SDK | 待定 |
-| Rust SDK | 待定 |
+| Rust SDK | Rust 1.96 |
 | Kotlin SDK | 待定 |
