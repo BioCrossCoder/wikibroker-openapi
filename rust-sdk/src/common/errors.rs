@@ -2,6 +2,7 @@ use std::string::FromUtf8Error;
 
 use hmac::digest::InvalidLength;
 
+#[derive(Debug)]
 pub enum SignError {
     GenerateCanonicalStringError(FromUtf8Error),
     GenerateSignatureError(InvalidLength),

@@ -7,12 +7,9 @@ use uuid::Uuid;
 mod common;
 mod core;
 
-use crate::{
-    common::{CustomHeader, SignError},
-    core::{generate_canonical_string, generate_signature},
-};
+pub use crate::{common::*, core::*};
 
-fn add_x_headers<B: ToString>(
+pub fn add_x_headers<B: ToString>(
     headers: &mut HeaderMap,
     api_key: Uuid,
     timestamp: DateTime<Utc>,
@@ -32,7 +29,7 @@ fn add_x_headers<B: ToString>(
     );
 }
 
-fn sign<B: ToString>(req: &mut Request<B>, key: &str) -> Result<(), SignError> {
+pub fn sign<B: ToString>(req: &mut Request<B>, key: &str) -> Result<(), SignError> {
     let canonical_string = generate_canonical_string(req)?;
     let signature = generate_signature(key, &canonical_string)?;
     req.headers_mut().insert(

@@ -4,7 +4,7 @@ use hmac::digest::InvalidLength;
 use http::{HeaderValue, Method, Request};
 use url::Url;
 
-use crate::common::{CustomHeader, hmac_sha256, sha256_hash};
+use crate::common::*;
 
 pub fn generate_signature(key: &str, message: &str) -> Result<String, InvalidLength> {
     let src = hmac_sha256(key.as_bytes(), message.as_bytes())?;
