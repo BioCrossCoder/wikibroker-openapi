@@ -4,10 +4,11 @@ use chrono::{DateTime, Utc};
 use http::{HeaderMap, HeaderName, HeaderValue, Request};
 use uuid::Uuid;
 
+mod adapters;
 mod common;
 mod core;
 
-pub use crate::{common::*, core::*};
+pub use crate::{adapters::*, common::*, core::*};
 
 pub fn add_x_headers<B: ToString>(
     headers: &mut HeaderMap,
