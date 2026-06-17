@@ -73,7 +73,7 @@ fn build_canonical_query<R: RequestLike<B>, B: ToString>(req: &R) -> String {
 
 fn calculate_body_hash<R: RequestLike<B>, B: ToString>(req: &R) -> String {
     let body = if req.method() == Method::POST {
-        &req.body().to_string()
+        &req.body()
     } else {
         ""
     };
