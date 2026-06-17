@@ -1,3 +1,2 @@
-mod reqwest_adapter;
-
-pub use reqwest_adapter::*;
+mod http;
+mod reqwest;

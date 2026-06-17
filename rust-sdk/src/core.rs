@@ -1,7 +1,7 @@
 use std::{collections::HashMap, string::FromUtf8Error};
 
 use hmac::digest::InvalidLength;
-use http::{HeaderValue, Method, Request};
+use http::{HeaderValue, Method};
 use url::Url;
 
 use crate::common::*;
@@ -11,7 +11,9 @@ pub fn generate_signature(key: &str, message: &str) -> Result<String, InvalidLen
     Ok(hex::encode(src))
 }
 
-pub fn generate_canonical_string<B: ToString>(req: &Request<B>) -> Result<String, FromUtf8Error> {
+pub fn generate_canonical_string<R: RequestLike<B>, B: ToString>(
+    req: &R,
+) -> Result<String, FromUtf8Error> {
     let empty_header_value = HeaderValue::from_str("").unwrap();
     let method = req.method().to_string();
     let path = req.uri().path().to_string();
@@ -50,7 +52,7 @@ pub fn generate_canonical_string<B: ToString>(req: &Request<B>) -> Result<String
     .join("\n"))
 }
 
-fn build_canonical_query<B>(req: &Request<B>) -> String {
+fn build_canonical_query<R: RequestLike<B>, B: ToString>(req: &R) -> String {
     let url = Url::parse(&req.uri().to_string()).unwrap();
     let mut query_map = HashMap::<String, Vec<String>>::new();
     for (key, value) in url.query_pairs().into_owned() {
@@ -69,7 +71,7 @@ fn build_canonical_query<B>(req: &Request<B>) -> String {
     parts.join("&")
 }
 
-fn calculate_body_hash<B: ToString>(req: &Request<B>) -> String {
+fn calculate_body_hash<R: RequestLike<B>, B: ToString>(req: &R) -> String {
     let body = if req.method() == Method::POST {
         &req.body().to_string()
     } else {

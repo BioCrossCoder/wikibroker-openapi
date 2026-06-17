@@ -37,14 +37,14 @@ mod tests {
         "1b0c80dbbc30905719559ab5526dfd59bae04d7337c8843efd9e51ff0af6dfb4";
 
     #[test]
-    fn test_sign() {
+    fn test_http() {
         let mut req = Request::builder()
             .method(METHOD)
             .uri(full_url())
             .body(body())
             .unwrap();
         add_x_headers::<Value>(req.headers_mut(), api_key(), TIMESTAMP, nonce());
-        sign::<Value>(&mut req, API_SECRET).unwrap();
+        sign::<Request<Value>, Value>(&mut req, API_SECRET).unwrap();
         let actual_signature = req
             .headers()
             .get(CustomHeader::Signature.to_string())
@@ -57,21 +57,13 @@ mod tests {
     #[test]
     fn test_reqwest() {
         let client = reqwest::Client::new();
-        let raw_req = client
+        let mut req = client
             .request(METHOD, full_url())
             .body(body().to_string())
             .build()
             .unwrap();
-        let mut req = Request::builder()
-            .method(raw_req.method())
-            .uri(raw_req.url().to_string())
-            .body(
-                serde_json::from_slice::<Value>(raw_req.body().unwrap().as_bytes().unwrap())
-                    .unwrap(),
-            )
-            .unwrap();
         add_x_headers::<Value>(req.headers_mut(), api_key(), TIMESTAMP, nonce());
-        sign(&mut req, API_SECRET).unwrap();
+        sign::<reqwest::Request, Value>(&mut req, API_SECRET).unwrap();
         let actual_signature = req
             .headers()
             .get(CustomHeader::Signature.to_string())

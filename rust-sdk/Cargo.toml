@@ -17,7 +17,9 @@ url = "2.5.8"
 uuid = { version = "1.23.3", features = ["v4"] }
 
 [features]
+default = ["http", "reqwest"]
 reqwest = ["dep:reqwest"]
+http = []
 
 [dev-dependencies]
 reqwest = { version = "0.13.4", features = ["json"] }
