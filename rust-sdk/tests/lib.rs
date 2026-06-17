@@ -43,7 +43,7 @@ mod tests {
             .uri(full_url())
             .body(body())
             .unwrap();
-        add_x_headers::<Value>(req.headers_mut(), api_key(), TIMESTAMP, nonce());
+        add_x_headers(req.headers_mut(), api_key(), TIMESTAMP, nonce());
         sign::<Request<Value>, Value>(&mut req, API_SECRET).unwrap();
         let actual_signature = req
             .headers()
@@ -62,7 +62,7 @@ mod tests {
             .body(body().to_string())
             .build()
             .unwrap();
-        add_x_headers::<Value>(req.headers_mut(), api_key(), TIMESTAMP, nonce());
+        add_x_headers(req.headers_mut(), api_key(), TIMESTAMP, nonce());
         sign::<reqwest::Request, Value>(&mut req, API_SECRET).unwrap();
         let actual_signature = req
             .headers()

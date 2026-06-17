@@ -10,7 +10,7 @@ mod core;
 
 pub use crate::{common::*, core::*};
 
-pub fn add_x_headers<B: ToString>(
+pub fn add_x_headers(
     headers: &mut HeaderMap,
     api_key: Uuid,
     timestamp: DateTime<Utc>,
