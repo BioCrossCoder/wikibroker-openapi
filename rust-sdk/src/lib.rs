@@ -8,7 +8,7 @@ mod adapters;
 mod common;
 mod core;
 
-pub use crate::{common::*, core::*};
+pub use crate::{adapters::*, common::*, core::*};
 
 pub fn add_x_headers(
     headers: &mut HeaderMap,
@@ -38,4 +38,24 @@ pub fn sign<R: RequestLike<B>, B: ToString>(req: &mut R, key: &str) -> Result<()
         HeaderValue::from_str(&signature).unwrap(),
     );
     Ok(())
+}
+
+#[cfg(feature = "reqwest")]
+pub fn reqwest_client_with_auth(
+    inner: reqwest::Client,
+    api_key: &str,
+    api_secret: &str,
+) -> Result<ClientWithAuth, uuid::Error> {
+    use serde_json::Value;
+
+    let key = Uuid::from_str(api_key)?;
+    Ok(ClientWithAuth::new(
+        inner,
+        key,
+        api_secret.to_string(),
+        add_x_headers,
+        sign::<reqwest::Request, Value>,
+        Utc::now,
+        Uuid::new_v4,
+    ))
 }

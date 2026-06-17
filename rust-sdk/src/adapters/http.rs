@@ -1,5 +1,5 @@
 #[cfg(feature = "http")]
-mod http {
+mod http_adapter {
     use http::Request;
 
     use crate::RequestLike;
