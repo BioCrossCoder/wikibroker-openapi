@@ -68,18 +68,19 @@ DART_SDK_VERSION := $(shell yq '.version' dart-sdk/pubspec.yaml)
 build-dart:
 	@cp -r dart-sdk wikibroker_openapi_sdk && cd wikibroker_openapi_sdk && rm -rf .dart_tool .idea *.iml && cd .. && tar zcf wikibroker-openapi-dart-sdk-$(DART_SDK_VERSION).tgz wikibroker_openapi_sdk && rm -rf wikibroker_openapi_sdk
 
-.PHONY: test test-js test-go test-py test-java test-php test-cs test-dart
+.PHONY: test test-js test-go test-py test-java test-php test-cs test-dart test-sw test-rs
 
 test:
 	@echo "运行所有 SDK 测试..."
-	@echo "[1/8] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/8] JavaScript SDK 测试通过 ✓"
-	@echo "[2/8] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/8] Go SDK 测试通过 ✓"
-	@echo "[3/8] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/8] Python SDK 测试通过 ✓"
-	@echo "[4/8] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/8] Java SDK 测试通过 ✓"
-	@echo "[5/8] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/8] PHP SDK 测试通过 ✓"
-	@echo "[6/8] 运行 .NET SDK 测试..." && $(MAKE) test-cs && echo "[6/8] .NET SDK 测试通过 ✓"
-	@echo "[7/8] 运行 Dart SDK 测试..." && $(MAKE) test-dart && echo "[7/8] Dart SDK 测试通过 ✓"
-	@echo "[8/8] 运行 Swift SDK 测试..." && $(MAKE) test-sw && echo "[8/8] Swift SDK 测试通过 ✓"
+	@echo "[1/9] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/9] JavaScript SDK 测试通过 ✓"
+	@echo "[2/9] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/9] Go SDK 测试通过 ✓"
+	@echo "[3/9] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/9] Python SDK 测试通过 ✓"
+	@echo "[4/9] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/9] Java SDK 测试通过 ✓"
+	@echo "[5/9] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/9] PHP SDK 测试通过 ✓"
+	@echo "[6/9] 运行 .NET SDK 测试..." && $(MAKE) test-cs && echo "[6/9] .NET SDK 测试通过 ✓"
+	@echo "[7/9] 运行 Dart SDK 测试..." && $(MAKE) test-dart && echo "[7/9] Dart SDK 测试通过 ✓"
+	@echo "[8/9] 运行 Swift SDK 测试..." && $(MAKE) test-sw && echo "[8/9] Swift SDK 测试通过 ✓"
+	@echo "[9/9] 运行 Rust SDK 测试..." && $(MAKE) test-rs && echo "[9/9] Rust SDK 测试通过 ✓"
 	@echo "所有 SDK 测试完成！"
 
 test-js: init-js
@@ -106,6 +107,9 @@ test-dart: init-dart
 test-sw:
 	@cd swift-sdk && swift test
 
+test-rs:
+	@cd rust-sdk && cargo test
+
 .PHONY: doc
 
 doc:
@@ -113,7 +117,7 @@ doc:
 	@cd docs && npx @redocly/cli build-docs openapi.json -o index.html
 	@echo "可视化文档生成完成！"
 
-.PHONY: cloc cloc-js cloc-go cloc-py cloc-java cloc-php cloc-cs cloc-dart
+.PHONY: cloc cloc-js cloc-go cloc-py cloc-java cloc-php cloc-cs cloc-dart cloc-sw cloc-rs
 
 cloc:
 	@echo "统计所有 SDK 核心逻辑代码行数..."; \
@@ -125,7 +129,8 @@ cloc:
 	CS=$$($(MAKE) cloc-cs | grep "C#  " | awk '{print $$1 "\t" $$5}'); \
 	DART=$$($(MAKE) cloc-dart | grep "Dart  " | awk '{print $$1 "\t" $$5}'); \
 	SW=$$($(MAKE) cloc-sw | grep "Swift  " | awk '{print $$1 "\t" $$5}'); \
-	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP $$CS $$DART $$SW
+	RS=$$($(MAKE) cloc-rs | grep "Rust  " | awk '{print $$1 "\t" $$5}'); \
+	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP $$CS $$DART $$SW $$RS
 	@echo "所有 SDK 代码行数统计完毕！"
 
 cloc-js:
@@ -159,3 +164,7 @@ cloc-dart:
 cloc-sw:
 	@echo "统计 Swift SDK 核心逻辑代码行数..."
 	@cd swift-sdk && cloc Sources/WikibrokerOpenapiSdk/Core.swift
+
+cloc-rs:
+	@echo "统计 Rust SDK 核心逻辑代码行数..."
+	@cd rust-sdk && cloc src/core.rs
