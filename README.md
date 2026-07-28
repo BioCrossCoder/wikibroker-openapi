@@ -653,14 +653,68 @@ let resp = s.request(
 
 **安装**
 
-```bash
-// TODO
-```
+1. 第一步：解压tgz包
+
+    ```bash
+    tar zxf wikibroker-openapi-rust-sdk-0.1.0.tgz
+    ```
+
+2. 第二步：在 `Cargo.toml` 中声明依赖
+
+    ```toml
+    [dependencies]
+    wikibroker_openapi_sdk = { path = "./rust-sdk" }
+    ```
 
 **示例**
 
-```rs
-// TODO
+`reqwest`
+
+```rust
+use wikibroker_openapi_sdk::*;
+use serde_json::json;
+
+#[tokio::main]
+async fn main() {
+    let api_key = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b";
+    let api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+    let inner = reqwest::Client::new();
+    let client = reqwest_client_with_auth(inner, api_key, api_secret).unwrap();
+
+    let req = inner
+        .post("https://api.example.com/test?q1=c&q2=b&q1=a")
+        .json(&json!({"key": "value"}))
+        .build()
+        .unwrap();
+
+    let resp = client.execute(req).await.unwrap();
+}
+```
+
+`http`
+
+```rust
+use http::{Method, Request};
+use wikibroker_openapi_sdk::*;
+use serde_json::json;
+use uuid::Uuid;
+use chrono::Utc;
+use std::str::FromStr;
+
+fn main() {
+    let api_key = Uuid::from_str("ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b").unwrap();
+    let api_secret = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4";
+    let mut req = Request::builder()
+        .method(Method::POST)
+        .uri("https://api.example.com/test?q1=c&q2=b&q1=a")
+        .body(json!({"key": "value"}))
+        .unwrap();
+
+    add_x_headers(&mut req, api_key, Utc::now(), Uuid::new_v4());
+    sign::<Request<serde_json::Value>, serde_json::Value>(&mut req, api_secret).unwrap();
+
+    // 使用 req 发送请求
+}
 ```
 
 ### 通过API接入

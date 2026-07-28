@@ -1,4 +1,4 @@
-.PHONY: init-js init-go init-py init-java init-php init-dart
+.PHONY: init-js init-go init-py init-java init-php init-dart init-rs
 
 init-js:
 	@cd javascript-sdk && pnpm install
@@ -18,7 +18,10 @@ init-php:
 init-dart:
 	@cd dart-sdk && dart pub get
 
-.PHONY: build build-js build-go build-py build-java build-php build-cs build-dart
+init-rs:
+	@cd rust-sdk && cargo fetch
+
+.PHONY: build build-js build-go build-py build-java build-php build-cs build-dart build-rs
 
 build:
 	@echo "清理已构建 SDK 包..."
@@ -27,14 +30,15 @@ build:
 	@echo ""
 	@echo "开始构建所有 SDK ..."
 	@echo ""
-	@echo "[1/8] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/8] JavaScript SDK 构建完成 ✓"
-	@echo "[2/8] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/8] Go SDK 构建完成 ✓"
-	@echo "[3/8] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/8] Python SDK 构建完成 ✓"
-	@echo "[4/8] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/8] Java SDK 构建完成 ✓"
-	@echo "[5/8] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/8] PHP SDK 构建完成 ✓"
-	@echo "[6/8] 开始构建 .NET SDK..." && $(MAKE) build-cs && echo "[6/8] .NET SDK 构建完成 ✓"
-	@echo "[7/8] 开始构建 Dart SDK..." && $(MAKE) build-dart && echo "[7/8] Dart SDK 构建完成 ✓"
-	@echo "[8/8] 开始构建 Swift SDK..." && $(MAKE) build-sw && echo "[8/8] Swift SDK 构建完成 ✓"
+	@echo "[1/9] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/9] JavaScript SDK 构建完成 ✓"
+	@echo "[2/9] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/9] Go SDK 构建完成 ✓"
+	@echo "[3/9] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/9] Python SDK 构建完成 ✓"
+	@echo "[4/9] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/9] Java SDK 构建完成 ✓"
+	@echo "[5/9] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/9] PHP SDK 构建完成 ✓"
+	@echo "[6/9] 开始构建 .NET SDK..." && $(MAKE) build-cs && echo "[6/9] .NET SDK 构建完成 ✓"
+	@echo "[7/9] 开始构建 Dart SDK..." && $(MAKE) build-dart && echo "[7/9] Dart SDK 构建完成 ✓"
+	@echo "[8/9] 开始构建 Swift SDK..." && $(MAKE) build-sw && echo "[8/9] Swift SDK 构建完成 ✓"
+	@echo "[9/9] 开始构建 Rust SDK..." && $(MAKE) build-rs && echo "[9/9] Rust SDK 构建完成 ✓"
 	@echo ""
 	@echo "所有SDK构建成功！"
 
@@ -67,6 +71,11 @@ DART_SDK_VERSION := $(shell yq '.version' dart-sdk/pubspec.yaml)
 
 build-dart:
 	@cp -r dart-sdk wikibroker_openapi_sdk && cd wikibroker_openapi_sdk && rm -rf .dart_tool .idea *.iml && cd .. && tar zcf wikibroker-openapi-dart-sdk-$(DART_SDK_VERSION).tgz wikibroker_openapi_sdk && rm -rf wikibroker_openapi_sdk
+
+RUST_SDK_VERSION := $(shell grep '^version = ' rust-sdk/Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+
+build-rs:
+	@cp -r rust-sdk wikibroker_openapi_sdk && cd wikibroker_openapi_sdk && rm -rf target .gitignore && cd .. && tar zcf wikibroker-openapi-rust-sdk-$(RUST_SDK_VERSION).tgz wikibroker_openapi_sdk && rm -rf wikibroker_openapi_sdk
 
 .PHONY: test test-js test-go test-py test-java test-php test-cs test-dart test-sw test-rs
 
