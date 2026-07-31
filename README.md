@@ -746,4 +746,4 @@ fn main() {
 | Swift SDK | Swift 6.3 |
 | Ruby SDK | 待定 |
 | Rust SDK | Rust 1.96 |
-| Kotlin SDK | 待定 |
+| Kotlin SDK | 2.4 |
