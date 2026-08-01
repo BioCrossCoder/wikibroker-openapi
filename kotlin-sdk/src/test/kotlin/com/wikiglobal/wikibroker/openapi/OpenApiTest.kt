@@ -1,8 +1,22 @@
 package com.wikiglobal.wikibroker.openapi
 
 import com.wikiglobal.wikibroker.openapi.adapters.OkHttpInterceptor
+import com.wikiglobal.wikibroker.openapi.adapters.buildKtorInterceptor
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders
 import com.wikiglobal.wikibroker.openapi.common.models.HttpRequestData
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.plugin
+import io.ktor.client.request.request
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -66,7 +80,38 @@ class OpenApiTest {
                 .build()
                 .newCall(req)
                 .execute()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            println(e)
+        }
+    }
+
+    @Test
+    fun testKtor() = runTest {
+        val engine = MockEngine { request ->
+            val actualSignature = request.headers[CustomHeaders.Signature.value] ?: ""
+            assertEquals(expectedSignature, actualSignature)
+            respond("OK", HttpStatusCode.OK)
+        }
+        val client = HttpClient(engine)
+        val interceptor = buildKtorInterceptor(
+            apiKey,
+            apiSecret,
+            ::addXHeaders,
+            ::sign,
+            { timestamp },
+            { nonce }
+        )
+        client.plugin(HttpSend).intercept(interceptor)
+        try {
+            val body = Json.encodeToString(body)
+            client.request {
+                url(OpenApiTest.url)
+                method = HttpMethod.parse(OpenApiTest.method)
+                contentType(ContentType.Application.Json)
+                setBody(body)
+            }
+        } catch (e: Exception) {
+            println(e)
         }
     }
 }
