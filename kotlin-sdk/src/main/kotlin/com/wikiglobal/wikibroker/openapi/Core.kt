@@ -5,12 +5,11 @@ import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders
 import com.wikiglobal.wikibroker.openapi.common.models.HttpRequestData
 import java.net.URI
 
-fun generateSignature(key: String, message: String): String =
+fun generateSignature(key: String, message: String) =
     Hash.hmacSha256(
         key.toByteArray(Charsets.UTF_8),
         message.toByteArray(Charsets.UTF_8)
     ).toHexString()
-
 
 fun generateCanonicalString(req: HttpRequestData): String {
     val method = req.method.uppercase()

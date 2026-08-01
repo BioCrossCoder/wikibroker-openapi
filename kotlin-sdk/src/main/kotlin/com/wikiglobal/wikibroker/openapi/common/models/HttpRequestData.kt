@@ -15,7 +15,6 @@ data class HttpRequestData(
         headers[name] = value
     }
 
-    fun getHeader(name: String): String {
-        return headers.getOrDefault(name, "")
-    }
+    fun getHeader(name: String) = headers.getOrDefault(name, "")
+
 }
