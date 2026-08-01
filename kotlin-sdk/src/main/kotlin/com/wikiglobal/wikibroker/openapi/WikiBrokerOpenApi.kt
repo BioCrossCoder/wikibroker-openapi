@@ -1,24 +1,25 @@
 package com.wikiglobal.wikibroker.openapi
 
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders
-import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestBuilder
-import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestOperator
+import com.wikiglobal.wikibroker.openapi.common.models.HttpRequestData
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-fun <T> addXHeaders(
-    builder: RequestBuilder<T>,
+fun addXHeaders(
+    req: HttpRequestData,
     apiKey: Uuid,
     timestamp: Instant,
     nonce: Uuid
 ) {
-    builder.header(CustomHeaders.ApiKey.value, apiKey.toString())
-        .header(CustomHeaders.Timestamp.value, timestamp.toEpochMilliseconds().toString())
-        .header(CustomHeaders.Nonce.value, nonce.toString())
+    req.apply {
+        setHeader(CustomHeaders.ApiKey.value, apiKey.toString())
+        setHeader(CustomHeaders.Timestamp.value, timestamp.toEpochMilliseconds().toString())
+        setHeader(CustomHeaders.Nonce.value, nonce.toString())
+    }
 }
 
-fun <T> sign(req: RequestOperator<T>, key: String) {
+fun sign(req: HttpRequestData, key: String) {
     val canonicalString = generateCanonicalString(req)
     val signature = generateSignature(key, canonicalString)
-    req.header(CustomHeaders.Signature.value, signature)
+    req.setHeader(CustomHeaders.Signature.value, signature)
 }

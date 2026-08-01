@@ -2,7 +2,7 @@ package com.wikiglobal.wikibroker.openapi
 
 import com.wikiglobal.wikibroker.openapi.common.Hash
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders
-import com.wikiglobal.wikibroker.openapi.common.interfaces.RequestReader
+import com.wikiglobal.wikibroker.openapi.common.models.HttpRequestData
 import java.net.URI
 
 fun generateSignature(key: String, message: String): String =
@@ -12,13 +12,13 @@ fun generateSignature(key: String, message: String): String =
     ).toHexString()
 
 
-fun generateCanonicalString(req: RequestReader): String {
+fun generateCanonicalString(req: HttpRequestData): String {
     val method = req.method.uppercase()
     val path = URI(req.url).toURL().path
     val canonicalQuery = buildCanonicalQuery(req)
-    val apiKey = req.header(CustomHeaders.ApiKey.value)
-    val timestamp = req.header(CustomHeaders.Timestamp.value)
-    val nonce = req.header(CustomHeaders.Nonce.value)
+    val apiKey = req.getHeader(CustomHeaders.ApiKey.value)
+    val timestamp = req.getHeader(CustomHeaders.Timestamp.value)
+    val nonce = req.getHeader(CustomHeaders.Nonce.value)
     val bodyHash = calculateBodyHash(req)
     return listOf(
         method,
@@ -31,12 +31,12 @@ fun generateCanonicalString(req: RequestReader): String {
     ).joinToString("\n")
 }
 
-private fun calculateBodyHash(req: RequestReader): String {
+private fun calculateBodyHash(req: HttpRequestData): String {
     val body = if (req.method.uppercase() == "POST") req.body else ""
     return Hash.sha256Hash(body.toByteArray(Charsets.UTF_8)).toHexString()
 }
 
-private fun buildCanonicalQuery(req: RequestReader): String {
+private fun buildCanonicalQuery(req: HttpRequestData): String {
     val queryString = URI(req.url).toURL().query ?: ""
     return queryString.split("&")
         .map { it.split("=") }
