@@ -1,8 +1,14 @@
 package com.wikiglobal.wikibroker.openapi
 
+import com.wikiglobal.wikibroker.openapi.adapters.OkHttpInterceptor
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders
 import com.wikiglobal.wikibroker.openapi.common.models.HttpRequestData
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Instant
@@ -30,5 +36,37 @@ class OpenApiTest {
         addXHeaders(req, apiKey, timestamp, nonce)
         sign(req, apiSecret)
         assertEquals(expectedSignature, req.getHeader(CustomHeaders.Signature.value))
+    }
+
+
+    @Test
+    fun testOkHttp() {
+        val interceptor =
+            OkHttpInterceptor(
+                apiKey,
+                apiSecret,
+                ::addXHeaders,
+                ::sign,
+                { timestamp },
+                { nonce },
+            )
+        val clientBuilder = OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .connectTimeout(1, TimeUnit.MILLISECONDS)
+        val body = Json.encodeToString(body).toRequestBody("application/json".toMediaType())
+        val req = Request.Builder().url(url).method(method, body).build()
+        try {
+            clientBuilder
+                .addInterceptor { chain ->
+                    val req = chain.request()
+                    val actualSignature = req.header(CustomHeaders.Signature.value) ?: ""
+                    assertEquals(expectedSignature, actualSignature)
+                    chain.proceed(req)
+                }
+                .build()
+                .newCall(req)
+                .execute()
+        } catch (_: Exception) {
+        }
     }
 }
