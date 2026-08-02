@@ -639,14 +639,103 @@ let resp = s.request(
 
 **安装**
 
-```bash
-// TODO
-```
+`maven`
+
+1. 第一步：安装jar包
+
+    ```bash
+    mvn install:install-file \
+    -Dfile=./wikibroker-openapi-kotlin-sdk-0.1.0.jar \
+    -DgroupId=com.wikiglobal \
+    -DartifactId=wikibroker-openapi-kotlin-sdk \
+    -Dversion=0.1.0 \
+    -Dpackaging=jar
+    ```
+
+2. 第二步：声明maven依赖
+
+    ```xml
+    <dependency>
+        <groupId>com.wikiglobal</groupId>
+        <artifactId>wikibroker-openapi-kotlin-sdk</artifactId>
+        <version>0.1.0</version>
+        <scope>compile</scope>
+    </dependency>
+    ```
+
+`gradle`
+
+    `build.gradle.kts`
+
+    ```kotlin
+    dependencies {
+        implementation(files('./wikibroker-openapi-kotlin-sdk-0.1.0.jar'))
+    }
+    ```
 
 **示例**
 
-```kt
-// TODO
+`okhttp`
+
+```kotlin
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import com.wikiglobal.wikibroker.openapi.createOkHttpInterceptor
+
+const val API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+const val API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+val interceptor = createOkHttpInterceptor(API_KEY, API_SECRET)
+val client = OkHttpClient.Builder()
+    .addInterceptor(interceptor)
+    .build()
+
+val body = """{"key":"value"}""".toRequestBody("application/json".toMediaType())
+val req = Request.Builder()
+    .url("https://api.example.com/test?q1=c&q2=b&q1=a")
+    .method("POST", body)
+    .build()
+
+try {
+    client.newCall(req).execute().use { response ->
+        // Handle Response
+    }
+} catch (e: Exception) {
+    // Handle Exception
+}
+```
+
+`ktor`
+
+```kotlin
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpSend
+import io.ktor.client.plugins.plugin
+import io.ktor.client.request.request
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.HttpMethod
+import com.wikiglobal.wikibroker.openapi.createKtorInterceptor
+
+const val API_KEY = "ef05e5b0-9daf-49e3-a0f4-9a3c13f55c3b"
+const val API_SECRET = "4ae4bf20-0afa-4122-ade8-c0beca7bd5e4"
+val client = HttpClient(CIO)
+val interceptor = createKtorInterceptor(API_KEY, API_SECRET)
+client.plugin(HttpSend).intercept(interceptor)
+
+try {
+    client.request {
+        url("https://api.example.com/test?q1=c&q2=b&q1=a")
+        method = HttpMethod.Post
+        contentType(ContentType.Application.Json)
+        setBody("""{"key":"value"}""")
+    }
+} catch (e: Exception) {
+    // Handle Exception
+}
 ```
 
 #### `Rust` 接入
@@ -736,7 +825,7 @@ fn main() {
 
 | SDK包 | 开发语言版本 |
 | --- | --- |
-| JavaScript SDK | Node 22 |
+| JavaScript SDK | Node 22 + TypeScript 5.9 |
 | Python SDK | Python 3.12 |
 | Golang SDK | Go 1.23 |
 | Java SDK | Java 21 |
@@ -746,4 +835,4 @@ fn main() {
 | Swift SDK | Swift 6.3 |
 | Ruby SDK | 待定 |
 | Rust SDK | Rust 1.96 |
-| Kotlin SDK | 2.4 |
+| Kotlin SDK | Java 21 + Kotlin 2.4 |
