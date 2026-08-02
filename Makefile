@@ -122,7 +122,7 @@ test-dart: init-dart
 	@cd dart-sdk && dart test
 
 test-sw:
-	@cd swift-sdk && swift test
+	@cd swift-sdk && xcrun swift test
 
 test-rs:
 	@cd rust-sdk && cargo test
