@@ -1,4 +1,14 @@
-.PHONY: init-js init-go init-py init-java init-php init-dart init-rs
+.PHONY: \
+	init-js build-js test-js cloc-js \
+	init-go build-go test-go cloc-go \
+	init-py build-py test-py cloc-py \
+	init-java build-java test-java cloc-java \
+	init-php build-php test-php cloc-php \
+	init-cs build-cs test-cs cloc-cs \
+	init-dart build-dart test-dart cloc-dart \
+	init-sw build-sw test-sw cloc-sw \
+	init-rs build-rs test-rs cloc-rs \
+	build test cloc doc
 
 init-js:
 	@cd javascript-sdk && pnpm install
@@ -21,7 +31,6 @@ init-dart:
 init-rs:
 	@cd rust-sdk && cargo fetch
 
-.PHONY: build build-js build-go build-py build-java build-php build-cs build-dart build-rs
 
 build:
 	@echo "清理已构建 SDK 包..."
@@ -77,7 +86,6 @@ RUST_SDK_VERSION := $(shell grep '^version = ' rust-sdk/Cargo.toml | head -1 | s
 build-rs:
 	@cp -r rust-sdk wikibroker_openapi_sdk && cd wikibroker_openapi_sdk && rm -rf target .gitignore && cd .. && tar zcf wikibroker-openapi-rust-sdk-$(RUST_SDK_VERSION).tgz wikibroker_openapi_sdk && rm -rf wikibroker_openapi_sdk
 
-.PHONY: test test-js test-go test-py test-java test-php test-cs test-dart test-sw test-rs
 
 test:
 	@echo "运行所有 SDK 测试..."
@@ -119,14 +127,11 @@ test-sw:
 test-rs:
 	@cd rust-sdk && cargo test
 
-.PHONY: doc
-
 doc:
 	@echo "生成可视化文档..."
 	@cd docs && npx @redocly/cli build-docs openapi.json -o index.html
 	@echo "可视化文档生成完成！"
 
-.PHONY: cloc cloc-js cloc-go cloc-py cloc-java cloc-php cloc-cs cloc-dart cloc-sw cloc-rs
 
 cloc:
 	@echo "统计所有 SDK 核心逻辑代码行数..."; \
