@@ -25,8 +25,14 @@ init-java:
 init-php:
 	@cd php-sdk && composer install
 
+init-cs:
+	@cd dotnet-sdk && dotnet restore ./src && dotnet restore ./tests
+
 init-dart:
 	@cd dart-sdk && dart pub get
+
+init-sw:
+	@cd swift-sdk && swift package resolve
 
 init-rs:
 	@cd rust-sdk && cargo fetch
