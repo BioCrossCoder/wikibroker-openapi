@@ -8,6 +8,7 @@
 	init-dart build-dart test-dart cloc-dart \
 	init-sw build-sw test-sw cloc-sw \
 	init-rs build-rs test-rs cloc-rs \
+	init-kt build-kt test-kt cloc-kt \
 	build test cloc doc
 
 init-js:
@@ -37,6 +38,8 @@ init-sw:
 init-rs:
 	@cd rust-sdk && cargo fetch
 
+init-kt:
+	@cd kotlin-sdk && ./gradlew dependencies
 
 build:
 	@echo "清理已构建 SDK 包..."
@@ -92,6 +95,10 @@ RUST_SDK_VERSION := $(shell grep '^version = ' rust-sdk/Cargo.toml | head -1 | s
 build-rs:
 	@cp -r rust-sdk wikibroker_openapi_sdk && cd wikibroker_openapi_sdk && rm -rf target .gitignore && cd .. && tar zcf wikibroker-openapi-rust-sdk-$(RUST_SDK_VERSION).tgz wikibroker_openapi_sdk && rm -rf wikibroker_openapi_sdk
 
+KOTLIN_SDK_VERSION := $(shell grep '^version = ' kotlin-sdk/build.gradle.kts | head -1 | sed 's/version = "\(.*\)"/\1/')
+
+build-kt:
+	@cd kotlin-sdk && ./gradlew clean jar && mv build/libs/wikibroker-openapi-sdk-$(KOTLIN_SDK_VERSION).jar ../wikibroker-openapi-kotlin-sdk-$(KOTLIN_SDK_VERSION).jar
 
 test:
 	@echo "运行所有 SDK 测试..."
@@ -132,6 +139,9 @@ test-sw:
 
 test-rs:
 	@cd rust-sdk && cargo test
+
+test-kt:
+	@cd kotlin-sdk && ./gradlew test
 
 doc:
 	@echo "生成可视化文档..."
@@ -188,3 +198,7 @@ cloc-sw:
 cloc-rs:
 	@echo "统计 Rust SDK 核心逻辑代码行数..."
 	@cd rust-sdk && cloc src/core.rs
+
+cloc-kt:
+	@echo "统计 Kotlin SDK 核心逻辑代码行数..."
+	@cd kotlin-sdk && cloc src/main/kotlin/com/wikiglobal/wikibroker/openapi/Core.kt
