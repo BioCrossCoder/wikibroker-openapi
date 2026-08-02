@@ -48,15 +48,16 @@ build:
 	@echo ""
 	@echo "开始构建所有 SDK ..."
 	@echo ""
-	@echo "[1/9] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/9] JavaScript SDK 构建完成 ✓"
-	@echo "[2/9] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/9] Go SDK 构建完成 ✓"
-	@echo "[3/9] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/9] Python SDK 构建完成 ✓"
-	@echo "[4/9] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/9] Java SDK 构建完成 ✓"
-	@echo "[5/9] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/9] PHP SDK 构建完成 ✓"
-	@echo "[6/9] 开始构建 .NET SDK..." && $(MAKE) build-cs && echo "[6/9] .NET SDK 构建完成 ✓"
-	@echo "[7/9] 开始构建 Dart SDK..." && $(MAKE) build-dart && echo "[7/9] Dart SDK 构建完成 ✓"
-	@echo "[8/9] 开始构建 Swift SDK..." && $(MAKE) build-sw && echo "[8/9] Swift SDK 构建完成 ✓"
-	@echo "[9/9] 开始构建 Rust SDK..." && $(MAKE) build-rs && echo "[9/9] Rust SDK 构建完成 ✓"
+	@echo "[1/10] 开始构建 JavaScript SDK..." && $(MAKE) build-js && echo "[1/10] JavaScript SDK 构建完成 ✓"
+	@echo "[2/10] 开始构建 Go SDK..." && $(MAKE) build-go && echo "[2/10] Go SDK 构建完成 ✓"
+	@echo "[3/10] 开始构建 Python SDK..." && $(MAKE) build-py && echo "[3/10] Python SDK 构建完成 ✓"
+	@echo "[4/10] 开始构建 Java SDK..." && $(MAKE) build-java && echo "[4/10] Java SDK 构建完成 ✓"
+	@echo "[5/10] 开始构建 PHP SDK..." && $(MAKE) build-php && echo "[5/10] PHP SDK 构建完成 ✓"
+	@echo "[6/10] 开始构建 .NET SDK..." && $(MAKE) build-cs && echo "[6/10] .NET SDK 构建完成 ✓"
+	@echo "[7/10] 开始构建 Dart SDK..." && $(MAKE) build-dart && echo "[7/10] Dart SDK 构建完成 ✓"
+	@echo "[8/10] 开始构建 Swift SDK..." && $(MAKE) build-sw && echo "[8/10] Swift SDK 构建完成 ✓"
+	@echo "[9/10] 开始构建 Rust SDK..." && $(MAKE) build-rs && echo "[9/10] Rust SDK 构建完成 ✓"
+	@echo "[10/10] 开始构建 Kotlin SDK..." && $(MAKE) build-kt && echo "[10/10] Kotlin SDK 构建完成 ✓"
 	@echo ""
 	@echo "所有SDK构建成功！"
 
@@ -102,15 +103,16 @@ build-kt:
 
 test:
 	@echo "运行所有 SDK 测试..."
-	@echo "[1/9] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/9] JavaScript SDK 测试通过 ✓"
-	@echo "[2/9] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/9] Go SDK 测试通过 ✓"
-	@echo "[3/9] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/9] Python SDK 测试通过 ✓"
-	@echo "[4/9] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/9] Java SDK 测试通过 ✓"
-	@echo "[5/9] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/9] PHP SDK 测试通过 ✓"
-	@echo "[6/9] 运行 .NET SDK 测试..." && $(MAKE) test-cs && echo "[6/9] .NET SDK 测试通过 ✓"
-	@echo "[7/9] 运行 Dart SDK 测试..." && $(MAKE) test-dart && echo "[7/9] Dart SDK 测试通过 ✓"
-	@echo "[8/9] 运行 Swift SDK 测试..." && $(MAKE) test-sw && echo "[8/9] Swift SDK 测试通过 ✓"
-	@echo "[9/9] 运行 Rust SDK 测试..." && $(MAKE) test-rs && echo "[9/9] Rust SDK 测试通过 ✓"
+	@echo "[1/10] 运行 JavaScript SDK 测试..." && $(MAKE) test-js && echo "[1/10] JavaScript SDK 测试通过 ✓"
+	@echo "[2/10] 运行 Go SDK 测试..." && $(MAKE) test-go && echo "[2/10] Go SDK 测试通过 ✓"
+	@echo "[3/10] 运行 Python SDK 测试..." && $(MAKE) test-py && echo "[3/10] Python SDK 测试通过 ✓"
+	@echo "[4/10] 运行 Java SDK 测试..." && $(MAKE) test-java && echo "[4/10] Java SDK 测试通过 ✓"
+	@echo "[5/10] 运行 PHP SDK 测试..." && $(MAKE) test-php && echo "[5/10] PHP SDK 测试通过 ✓"
+	@echo "[6/10] 运行 .NET SDK 测试..." && $(MAKE) test-cs && echo "[6/10] .NET SDK 测试通过 ✓"
+	@echo "[7/10] 运行 Dart SDK 测试..." && $(MAKE) test-dart && echo "[7/10] Dart SDK 测试通过 ✓"
+	@echo "[8/10] 运行 Swift SDK 测试..." && $(MAKE) test-sw && echo "[8/10] Swift SDK 测试通过 ✓"
+	@echo "[9/10] 运行 Rust SDK 测试..." && $(MAKE) test-rs && echo "[9/10] Rust SDK 测试通过 ✓"
+	@echo "[10/10] 运行 Kotlin SDK 测试..." && $(MAKE) test-kt && echo "[10/10] Kotlin SDK 测试通过 ✓"
 	@echo "所有 SDK 测试完成！"
 
 test-js: init-js
@@ -160,7 +162,8 @@ cloc:
 	DART=$$($(MAKE) cloc-dart | grep "Dart  " | awk '{print $$1 "\t" $$5}'); \
 	SW=$$($(MAKE) cloc-sw | grep "Swift  " | awk '{print $$1 "\t" $$5}'); \
 	RS=$$($(MAKE) cloc-rs | grep "Rust  " | awk '{print $$1 "\t" $$5}'); \
-	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP $$CS $$DART $$SW $$RS
+	KT=$$($(MAKE) cloc-kt | grep "Kotlin  " | awk '{print $$1 "\t" $$5}'); \
+	printf "%-15s %15s\n" $$TS $$GO $$PY $$JAVA $$PHP $$CS $$DART $$SW $$RS $$KT
 	@echo "所有 SDK 代码行数统计完毕！"
 
 cloc-js:
