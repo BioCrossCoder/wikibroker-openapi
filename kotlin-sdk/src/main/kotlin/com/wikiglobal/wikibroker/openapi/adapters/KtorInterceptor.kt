@@ -19,17 +19,19 @@ fun buildKtorInterceptor(
     sign: (HttpRequestData, String) -> Unit,
     timestampGenerator: () -> Instant,
     idGenerator: () -> Uuid,
+    serialize: suspend (Any) -> String = { data ->
+        when (data) {
+            is String -> data
+            is ByteArray -> data.decodeToString()
+            is ByteReadChannel -> data.toByteArray().decodeToString()
+            is OutgoingContent.ByteArrayContent -> data.bytes().decodeToString()
+            is OutgoingContent.NoContent -> "{}"
+            is OutgoingContent.ReadChannelContent -> data.readFrom().toByteArray().decodeToString()
+            else -> data.toString()
+        }
+    },
 ): suspend Sender.(HttpRequestBuilder) -> HttpClientCall = { builder ->
-    val body = when (val content = builder.body) {
-        is String -> content
-        is ByteArray -> content.decodeToString()
-        is ByteReadChannel -> content.toByteArray().decodeToString()
-        is OutgoingContent.ByteArrayContent -> content.bytes().decodeToString()
-        is OutgoingContent.NoContent -> "{}"
-        is OutgoingContent.ReadChannelContent -> content.readFrom().toByteArray().decodeToString()
-        else -> content.toString()
-    }
-    val data = HttpRequestData(builder.method.value, builder.url.toString(), body)
+    val data = HttpRequestData(builder.method.value, builder.url.toString(), serialize(builder.body))
     loadHeaders(data, apiKey, timestampGenerator(), idGenerator())
     sign(data, apiSecret)
     CustomHeaders.entries.forEach {
