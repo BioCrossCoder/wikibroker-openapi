@@ -7,14 +7,9 @@ import javax.crypto.spec.SecretKeySpec
 object Hash {
     fun hmacSha256(key: ByteArray, message: ByteArray): ByteArray {
         val restoreKey = SecretKeySpec(key, "HmacSHA256")
-        val mac = Mac.getInstance(restoreKey.algorithm)
-        mac.init(restoreKey)
+        val mac = Mac.getInstance(restoreKey.algorithm).apply { init(restoreKey) }
         return mac.doFinal(message)
     }
 
-    fun sha256Hash(message: ByteArray): ByteArray {
-        val md = MessageDigest.getInstance("SHA-256")
-        md.update(message)
-        return md.digest()
-    }
+    fun sha256Hash(message: ByteArray) = MessageDigest.getInstance("SHA-256").digest(message)!!
 }
