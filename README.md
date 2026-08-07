@@ -665,13 +665,13 @@ let resp = s.request(
 
 `gradle`
 
-    `build.gradle.kts`
+`build.gradle.kts`
 
-    ```kotlin
-    dependencies {
-        implementation(files('./wikibroker-openapi-kotlin-sdk-0.1.0.jar'))
-    }
-    ```
+```kotlin
+dependencies {
+    implementation(files('./wikibroker-openapi-kotlin-sdk-0.1.0.jar'))
+}
+```
 
 **示例**
 
