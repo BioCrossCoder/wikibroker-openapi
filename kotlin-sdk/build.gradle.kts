@@ -12,20 +12,26 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    // Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json-jvm
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+
+    val okhttpVersion = "4.12.0"
     // Source: https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
-    compileOnly("com.squareup.okhttp3:okhttp:4.12.0")
-    testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
+    compileOnly("com.squareup.okhttp3:okhttp:$okhttpVersion")
+    testImplementation("com.squareup.okhttp3:okhttp:$okhttpVersion")
+
+    val ktorVersion = "3.4.2"
     // Source: https://mvnrepository.com/artifact/io.ktor/ktor-client-core
-    compileOnly("io.ktor:ktor-client-core:3.4.2")
-    testImplementation("io.ktor:ktor-client-core:3.4.2")
+    compileOnly("io.ktor:ktor-client-core:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-core:$ktorVersion")
     // Source: https://mvnrepository.com/artifact/io.ktor/ktor-client-mock
-    testImplementation("io.ktor:ktor-client-mock:3.4.2")
+    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
+
+    val kotlinxVersion = "1.11.0"
+    // Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json-jvm
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxVersion")
     // Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-core
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxVersion")
     // Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-test
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxVersion")
 
     val cryptoVersion = "0.6.0"
     implementation("dev.whyoleg.cryptography:cryptography-core:$cryptoVersion")
