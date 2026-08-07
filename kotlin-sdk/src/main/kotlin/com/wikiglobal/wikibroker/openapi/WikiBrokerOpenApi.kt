@@ -21,7 +21,7 @@ fun addXHeaders(
     }
 }
 
-fun sign(req: HttpRequestData, key: String) {
+suspend fun sign(req: HttpRequestData, key: String) {
     val canonicalString = generateCanonicalString(req)
     val signature = generateSignature(key, canonicalString)
     req.setHeader(CustomHeaders.Signature.value, signature)

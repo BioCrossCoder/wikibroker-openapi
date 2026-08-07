@@ -1,15 +1,15 @@
 package com.wikiglobal.wikibroker.openapi.common
 
-import java.security.MessageDigest
-import javax.crypto.Mac
-import javax.crypto.spec.SecretKeySpec
+import dev.whyoleg.cryptography.CryptographyProvider
+import dev.whyoleg.cryptography.algorithms.HMAC
+import dev.whyoleg.cryptography.algorithms.SHA256
 
 object Hash {
-    fun hmacSha256(key: ByteArray, message: ByteArray): ByteArray {
-        val restoreKey = SecretKeySpec(key, "HmacSHA256")
-        val mac = Mac.getInstance(restoreKey.algorithm).apply { init(restoreKey) }
-        return mac.doFinal(message)
+    suspend fun hmacSha256(key: ByteArray, message: ByteArray): ByteArray {
+        val hmac = CryptographyProvider.Default.get(HMAC)
+        val key = hmac.keyDecoder(SHA256).decodeFromByteArray(HMAC.Key.Format.RAW, key)
+        return key.signatureGenerator().generateSignature(message)
     }
 
-    fun sha256Hash(message: ByteArray) = MessageDigest.getInstance("SHA-256").digest(message)!!
+    suspend fun sha256Hash(message: ByteArray) = CryptographyProvider.Default.get(SHA256).hasher().hash(message)
 }

@@ -26,7 +26,7 @@ fun buildKtorInterceptor(
     apiKey: Uuid,
     apiSecret: String,
     loadHeaders: (HttpRequestData, Uuid, Instant, Uuid) -> Unit,
-    sign: (HttpRequestData, String) -> Unit,
+    sign: suspend (HttpRequestData, String) -> Unit,
     timestampGenerator: () -> Instant,
     idGenerator: () -> Uuid,
     serialize: suspend ((Any) -> String) = ::serializeKtorRequestBuilderBody,

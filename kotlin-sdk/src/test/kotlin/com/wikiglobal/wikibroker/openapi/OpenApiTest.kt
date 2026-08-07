@@ -44,14 +44,13 @@ class OpenApiTest {
     }
 
     @Test
-    fun testSign() {
+    fun testSign() = runTest {
         val req = HttpRequestData(method, url)
         req.setBody(body, Json::encodeToString)
         addXHeaders(req, apiKey, timestamp, nonce)
         sign(req, apiSecret)
         assertEquals(expectedSignature, req.getHeader(CustomHeaders.Signature.value))
     }
-
 
     @Test
     fun testOkHttp() {

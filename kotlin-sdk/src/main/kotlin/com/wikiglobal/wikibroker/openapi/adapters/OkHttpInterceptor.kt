@@ -2,6 +2,7 @@ package com.wikiglobal.wikibroker.openapi.adapters
 
 import com.wikiglobal.wikibroker.openapi.common.enums.CustomHeaders
 import com.wikiglobal.wikibroker.openapi.common.models.HttpRequestData
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.RequestBody
 import okhttp3.Response
@@ -12,7 +13,7 @@ class OkHttpInterceptor(
     val apiKey: Uuid,
     val apiSecret: String,
     val loadHeaders: (HttpRequestData, Uuid, Instant, Uuid) -> Unit,
-    val sign: (HttpRequestData, String) -> Unit,
+    val sign: suspend (HttpRequestData, String) -> Unit,
     val timestampGenerator: () -> Instant,
     val idGenerator: () -> Uuid,
 ) : Interceptor {
@@ -28,7 +29,8 @@ class OkHttpInterceptor(
         val req = chain.request()
         val data = HttpRequestData(req.method, req.url.toString(), readRequestBody(req.body))
         this.loadHeaders(data, this.apiKey, this.timestampGenerator(), this.idGenerator())
-        this.sign(data, this.apiSecret)
+        val self = this
+        runBlocking { self.sign(data, self.apiSecret) }
         val reqBuilder = req.newBuilder()
         CustomHeaders.entries.forEach {
             reqBuilder.addHeader(it.value, data.getHeader(it.value))

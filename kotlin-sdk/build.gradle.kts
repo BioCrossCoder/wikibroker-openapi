@@ -26,6 +26,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
     // Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-test
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+
+    val cryptoVersion = "0.6.0"
+    implementation("dev.whyoleg.cryptography:cryptography-core:$cryptoVersion")
+    implementation("dev.whyoleg.cryptography:cryptography-provider-optimal:$cryptoVersion")
 }
 
 kotlin {
